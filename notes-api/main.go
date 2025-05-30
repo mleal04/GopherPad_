@@ -21,3 +21,11 @@ func main() {
 	//start the server
 	http.ListenAndServe(":8080", r)
 }
+
+// curl -X POST http://localhost:8080/notes \
+//      -H "Content-Type: application/json" \
+//      -d '{"title": "Hello", "content": "This is a note"}'
+
+// curl http://localhost:8080/notes
+
+// curl http://localhost:8080/notes/abc123
