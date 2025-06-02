@@ -1,14 +1,17 @@
 package main
 
 import (
-	"log"
+	// "log"
 	"net/http"
 	"notes-api/auth"
 	"notes-api/handlers"
 	"notes-api/models"  // models: Note and LoginRequest
 	"notes-api/storage" //use connect to connect to the database
 
+	"os"
+
 	"github.com/go-chi/chi/v5"
+	log "github.com/sirupsen/logrus"
 )
 
 // curl -X POST http://localhost:8080/register \
@@ -35,7 +38,29 @@ import (
 //   -H "Content-Type: application/json" \
 //   -d '{"title": "Updated Title", "content": "Updated content"}'
 
+// start the logger
+func logging_entry() {
+	// Create or append to logs/app.log
+	file, err := os.OpenFile("logs/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err == nil {
+		log.SetOutput(file)
+	} else {
+		log.Info("Failed to log to file, using default stderr")
+	}
+
+	// Log in JSON for Splunk-friendly format
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetLevel(log.InfoLevel)
+}
+
 func main() {
+	//initialize the logger
+	logging_entry()
+	log.WithFields(log.Fields{
+		"username": "admin",
+		"event":    "login_success",
+	}).Info("User logged in")
+
 	//connect to the database (first)
 	if err := storage.Connect(); err != nil {
 		log.Fatal("Failed to connect to DB:", err)

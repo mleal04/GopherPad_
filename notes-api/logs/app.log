@@ -1,0 +1,3 @@
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-01T23:21:25-07:00","username":"admin"}
+{"level":"info","msg":"DB connected successfully 🎉","time":"2025-06-01T23:21:25-07:00"}
+{"level":"info","msg":"DB schema migrated successfully 🎉","time":"2025-06-01T23:21:25-07:00"}
