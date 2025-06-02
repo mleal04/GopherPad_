@@ -1,16 +1,23 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"notes-api/auth"
 	"notes-api/handlers"
+	"notes-api/models"  // models: Note and LoginRequest
+	"notes-api/storage" //use connect to connect to the database
 
 	"github.com/go-chi/chi/v5"
 )
 
+// curl -X POST http://localhost:8080/register \
+//      -H "Content-Type: application/json" \
+//      -d '{"username": "admin", "password": "trial"}'
+
 // curl -X POST http://localhost:8080/login \
 //      -H "Content-Type: application/json" \
-//      -d '{"username": "admin", "password": "password"}'
+//      -d '{"username": "admin", "password": "trial"}'
 
 // curl -X POST http://localhost:8080/notes \
 //   -H "Authorization: Bearer $TOKEN" \
@@ -29,9 +36,22 @@ import (
 //   -d '{"title": "Updated Title", "content": "Updated content"}'
 
 func main() {
+	//connect to the database (first)
+	if err := storage.Connect(); err != nil {
+		log.Fatal("Failed to connect to DB:", err)
+	}
+	log.Println("DB connected successfully 🎉")
+
+	//set up the database schema --> if it doesn't exist
+	if err := storage.DB.AutoMigrate(&models.User{}); err != nil {
+		log.Fatal("Failed to migrate DB schema:", err)
+	}
+	log.Println("DB schema migrated successfully 🎉")
+
 	//create a router for the server
 	r := chi.NewRouter()
 	//route to login
+	r.Post("/register", handlers.CreateUser)
 	r.Post("/login", handlers.Login)
 
 	//group the /notes routes together

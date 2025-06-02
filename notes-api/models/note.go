@@ -2,6 +2,13 @@ package models
 
 import "github.com/golang-jwt/jwt/v5"
 
+// schema for the database
+type User struct {
+	ID       uint   `gorm:"primaryKey"`
+	Username string `gorm:"unique"`
+	Password string // this will store the hashed password
+}
+
 // this will be the model for the database
 type Note struct {
 	ID      string `json:"id"`

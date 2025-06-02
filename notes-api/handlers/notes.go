@@ -5,11 +5,12 @@ import (
 	"log"
 	"net/http"
 	"notes-api/auth"
-	"notes-api/models" // models: Note and LoginRequest
+	"notes-api/models" // models
 	"notes-api/storage"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // curl -X POST http://localhost:8080/login \
@@ -32,6 +33,40 @@ import (
 //   -H "Content-Type: application/json" \
 //   -d '{"title": "Updated Title", "content": "Updated content"}'
 
+// CreateUser --> POST to register a new user
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	//get user credentials from the request body
+	log.Println("Received POST request for user registration")
+	var input struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	//hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Could not hash password", http.StatusInternalServerError)
+		return
+	}
+	//create a new user
+	user := models.User{
+		Username: input.Username,
+		Password: string(hashedPassword),
+	}
+	if err := storage.DB.Create(&user).Error; err != nil {
+		http.Error(w, "Error creating user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte("User registered"))
+	log.Println("User registered successfully")
+}
+
 // Login --> POST to verify the user and return a JWT token
 func Login(w http.ResponseWriter, r *http.Request) {
 	//get user credentials from the request body
@@ -41,9 +76,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	//verify the credentials
-	if req.Username != "admin" || req.Password != "password" {
-		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+	var user models.User //should be filled with the correct user data
+	if err := storage.DB.Where("username = ?", req.Username).First(&user).Error; err != nil {
+		http.Error(w, "User not found", http.StatusUnauthorized)
+		return
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	if err != nil {
+		http.Error(w, "Invalid password", http.StatusUnauthorized)
 		return
 	}
 	//generate a token (in this case, just a simple string)
@@ -55,6 +95,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	//send the token back to the user
 	w.WriteHeader(http.StatusOK) // 200 OK for successful login
 	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	log.Println("User logged in successfully, token generated")
 }
 
 // GetAllNotes --> GET
