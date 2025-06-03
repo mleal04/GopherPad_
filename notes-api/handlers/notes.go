@@ -2,33 +2,37 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"notes-api/auth"
-	"notes-api/models" // models
-	"notes-api/storage"
+	"notes-api/models"  // models
+	"notes-api/storage" //DB1 and DB2
 
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
+// curl -X POST http://localhost:8080/register \
+//      -H "Content-Type: application/json" \
+//      -d '{"username": "admin", "password": "trial"}'
+
 // curl -X POST http://localhost:8080/login \
 //      -H "Content-Type: application/json" \
-//      -d '{"username": "admin", "password": "password"}'
+//      -d '{"username": "mleal2", "password": "hellomom"}'
 
-// curl -X POST http://localhost:8080/notes \
-//   -H "Authorization: Bearer $TOKEN" \
+// curl -X POST http://localhost:8080/notes/mleal2 \
+//   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sZWFsMiIsImV4cCI6MTc0ODkzNTU3Nn0.BiM86cC_-yLVaohDJe0bNWS1m0J9pbc6TKtOrWnmTFM" \
 //   -H "Content-Type: application/json" \
-//   -d '{"title": "Test Note", "content": "This is a secured note"}'
+//   -d '{"username": "mleal2", "title": "my-first-note-2", "content": "this is my first note-2"}'
 
-// curl http://localhost:8080/notes \
+// curl http://localhost:8080/notes/mleal2 \                                                             ─╯
+//  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sZWFsMiIsImV4cCI6MTc0ODkzNTU3Nn0.BiM86cC_-yLVaohDJe0bNWS1m0J9pbc6TKtOrWnmTFM" \
+
+// curl http://localhost:8080/notes/mleal2/<id> \
 //   -H "Authorization: Bearer $TOKEN"
+// 	-d '{"usernane": mlea2}'
 
-// curl http://localhost:8080/notes/<id> \
-//   -H "Authorization: Bearer $TOKEN"
-
-// curl -X PUT http://localhost:8080/notes/<id> \
+// curl -X PUT http://localhost:8080/notes/mleal2/<id> \
 //   -H "Authorization: Bearer $TOKEN" \
 //   -H "Content-Type: application/json" \
 //   -d '{"title": "Updated Title", "content": "Updated content"}'
@@ -101,23 +105,53 @@ func Login(w http.ResponseWriter, r *http.Request) {
 // GetAllNotes --> GET
 func GetAllNotes(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received GET request for all notes")
-	notes := storage.AllNotes()
-	w.WriteHeader(http.StatusOK) // 200 OK for GET
+	//get the username
+	username := chi.URLParam(r, "username")
+	log.Printf("Retrieving notes for user: %s", username)
+	//check the username exists in the DB1
+	var user models.User
+	if err := storage.DB.Where("username = ?", username).First(&user).Error; err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	log.Printf("User %s found, retrieving notes", user.Username)
+	//get all notes from DB2
+	var notes []models.Notes
+	if err := storage.DB2.Where("username = ?", user.Username).Find(&notes).Error; err != nil {
+		log.Printf("Error retrieving notes for user %s: %v", user.Username, err)
+		http.Error(w, "Failed to retrieve notes", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(notes)
+	log.Println("Notes retrieved successfully from DB2")
 }
 
 // CreateNote --> POST
 func CreateNote(w http.ResponseWriter, r *http.Request) {
+	//token should be checked before this handler is called
 	log.Println("Received POST request to create a new note")
-	var note models.Note
-	if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
+	//get the username, title and content from the request body
+	var input models.NoteCreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	note.ID = uuid.New().String()
-	storage.Create(note)
+	//create the note
+	note := models.Notes{
+		Username: input.Username,
+		Title:    input.Title,
+		Content:  input.Content,
+	}
+	//save the note to DB2
+	if err := storage.DB2.Create(&note).Error; err != nil {
+		http.Error(w, "Failed to create note", http.StatusInternalServerError)
+		return
+	}
+	//send the response back to the user
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(note)
+	log.Println("Note created successfully to DB2")
 }
 
 // GetNote --> GET

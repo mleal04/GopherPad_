@@ -1,3 +1,88 @@
 {"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-01T23:21:25-07:00","username":"admin"}
 {"level":"info","msg":"DB connected successfully 🎉","time":"2025-06-01T23:21:25-07:00"}
 {"level":"info","msg":"DB schema migrated successfully 🎉","time":"2025-06-01T23:21:25-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-02T22:17:24-07:00","username":"admin"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-02T22:17:25-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-02T22:17:25-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-02T22:17:25-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-02T23:24:51-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-02T23:24:51-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-02T23:24:51-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-02T23:24:51-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-02T23:24:51-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-02T23:24:51-07:00"}
+{"level":"info","msg":"Received POST request for user registration","time":"2025-06-02T23:25:22-07:00"}
+{"level":"info","msg":"User registered successfully","time":"2025-06-02T23:25:22-07:00"}
+{"level":"info","msg":"Received POST request for login","time":"2025-06-02T23:26:16-07:00"}
+{"level":"info","msg":"User logged in successfully, token generated","time":"2025-06-02T23:26:16-07:00"}
+{"level":"info","msg":"Received POST request to create a new note","time":"2025-06-02T23:27:27-07:00"}
+{"level":"info","msg":"Received POST request to create a new note","time":"2025-06-02T23:28:55-07:00"}
+{"level":"info","msg":"Note created successfully to DB2","time":"2025-06-02T23:28:55-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-02T23:44:10-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-02T23:44:10-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-02T23:44:10-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-02T23:44:10-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-02T23:44:10-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-02T23:44:10-07:00"}
+{"level":"info","msg":"Received POST request to create a new note","time":"2025-06-02T23:44:43-07:00"}
+{"level":"info","msg":"Received POST request to create a new note","time":"2025-06-02T23:46:37-07:00"}
+{"level":"info","msg":"Note created successfully to DB2","time":"2025-06-02T23:46:37-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-02T23:51:20-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-02T23:52:53-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-02T23:56:36-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-02T23:56:36-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-02T23:56:36-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-02T23:56:36-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-02T23:56:36-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-02T23:56:36-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-02T23:57:51-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-02T23:57:51-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-02T23:57:51-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-02T23:57:51-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-02T23:57:51-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-02T23:57:51-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-02T23:57:57-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-03T00:01:53-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-03T00:01:53-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-03T00:01:53-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-03T00:01:53-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-03T00:01:53-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-03T00:01:53-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-03T00:01:58-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-03T00:02:36-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-03T00:02:36-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-03T00:02:36-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-03T00:02:36-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-03T00:02:36-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-03T00:02:36-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-03T00:02:39-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-03T00:03:56-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-03T00:03:56-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-03T00:03:56-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-03T00:03:56-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-03T00:03:56-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-03T00:03:56-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-03T00:04:00-07:00"}
+{"level":"info","msg":"Received POST request for login","time":"2025-06-03T00:06:38-07:00"}
+{"level":"info","msg":"User logged in successfully, token generated","time":"2025-06-03T00:06:38-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-03T00:09:13-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-03T00:12:44-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-03T00:12:44-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-03T00:12:44-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-03T00:12:44-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-03T00:12:44-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-03T00:12:44-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-03T00:12:47-07:00"}
+{"level":"info","msg":"Received POST request to create a new note","time":"2025-06-03T00:15:39-07:00"}
+{"level":"info","msg":"Note created successfully to DB2","time":"2025-06-03T00:15:39-07:00"}
+{"level":"info","msg":"Received GET request for a specific note","time":"2025-06-03T00:17:04-07:00"}
+{"event":"login_success","level":"info","msg":"User logged in","time":"2025-06-03T00:21:47-07:00","username":"admin"}
+{"level":"info","msg":"connected to mydb successfully","time":"2025-06-03T00:21:47-07:00"}
+{"level":"info","msg":"connected to mydb2 successfully","time":"2025-06-03T00:21:47-07:00"}
+{"level":"info","msg":"DB's connected successfully 🎉","time":"2025-06-03T00:21:47-07:00"}
+{"level":"info","msg":"DB1 schema migrated successfully 🎉","time":"2025-06-03T00:21:47-07:00"}
+{"level":"info","msg":"DB2 schema migrated successfully 🎉","time":"2025-06-03T00:21:47-07:00"}
+{"level":"info","msg":"Received GET request for all notes","time":"2025-06-03T00:21:52-07:00"}
+{"level":"info","msg":"Retrieving notes for user: mleal2","time":"2025-06-03T00:21:52-07:00"}
+{"level":"info","msg":"User mleal2 found, retrieving notes","time":"2025-06-03T00:21:52-07:00"}
+{"level":"info","msg":"Notes retrieved successfully from DB2","time":"2025-06-03T00:21:52-07:00"}

@@ -20,20 +20,21 @@ import (
 
 // curl -X POST http://localhost:8080/login \
 //      -H "Content-Type: application/json" \
-//      -d '{"username": "admin", "password": "trial"}'
+//      -d '{"username": "mleal2", "password": "hellomom"}'
 
-// curl -X POST http://localhost:8080/notes \
-//   -H "Authorization: Bearer $TOKEN" \
+// curl -X POST http://localhost:8080/notes/mleal2 \
+//   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sZWFsMiIsImV4cCI6MTc0ODkzNTU3Nn0.BiM86cC_-yLVaohDJe0bNWS1m0J9pbc6TKtOrWnmTFM" \
 //   -H "Content-Type: application/json" \
-//   -d '{"title": "Test Note", "content": "This is a secured note"}'
+//   -d '{"username": "mleal2", "title": "my-first-note-2", "content": "this is my first note-2"}'
 
-// curl http://localhost:8080/notes \
+// curl http://localhost:8080/notes/mleal2 \                                                             ─╯
+//  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sZWFsMiIsImV4cCI6MTc0ODkzNTU3Nn0.BiM86cC_-yLVaohDJe0bNWS1m0J9pbc6TKtOrWnmTFM" \
+
+// curl http://localhost:8080/notes/mleal2/<id> \
 //   -H "Authorization: Bearer $TOKEN"
+// 	-d '{"usernane": mlea2}'
 
-// curl http://localhost:8080/notes/<id> \
-//   -H "Authorization: Bearer $TOKEN"
-
-// curl -X PUT http://localhost:8080/notes/<id> \
+// curl -X PUT http://localhost:8080/notes/mleal2/<id> \
 //   -H "Authorization: Bearer $TOKEN" \
 //   -H "Content-Type: application/json" \
 //   -d '{"title": "Updated Title", "content": "Updated content"}'
@@ -61,17 +62,21 @@ func main() {
 		"event":    "login_success",
 	}).Info("User logged in")
 
-	//connect to the database (first)
+	//connect to the databases (first)
 	if err := storage.Connect(); err != nil {
 		log.Fatal("Failed to connect to DB:", err)
 	}
-	log.Println("DB connected successfully 🎉")
+	log.Println("DB's connected successfully 🎉")
 
 	//set up the database schema --> if it doesn't exist
 	if err := storage.DB.AutoMigrate(&models.User{}); err != nil {
 		log.Fatal("Failed to migrate DB schema:", err)
 	}
-	log.Println("DB schema migrated successfully 🎉")
+	log.Println("DB1 schema migrated successfully 🎉")
+	if err := storage.DB2.AutoMigrate(&models.Notes{}); err != nil {
+		log.Fatal("Failed to migrate DB schema:", err)
+	}
+	log.Println("DB2 schema migrated successfully 🎉")
 
 	//create a router for the server
 	r := chi.NewRouter()
@@ -85,11 +90,11 @@ func main() {
 		r.Use(auth.JWTMiddleware)
 
 		r.Route("/notes", func(r chi.Router) {
-			r.Get("/", handlers.GetAllNotes)
-			r.Post("/", handlers.CreateNote)
-			r.Get("/{id}", handlers.GetNote)
-			r.Put("/{id}", handlers.UpdateNote)
-			r.Delete("/{id}", handlers.DeleteNote)
+			r.Get("/{username}", handlers.GetAllNotes)
+			r.Post("/{username}", handlers.CreateNote)
+			r.Get("/{username}/{id}", handlers.GetNote)
+			r.Put("/{username}/{id}", handlers.UpdateNote)
+			r.Delete("/{username}/{id}", handlers.DeleteNote)
 		})
 	})
 	//start the server --> where r is the router
