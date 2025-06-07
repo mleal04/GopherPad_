@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"notes-api/auth"
 	"notes-api/models"  // models
 	"notes-api/storage" //DB1 and DB2
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	log "github.com/sirupsen/logrus"
@@ -14,28 +16,30 @@ import (
 
 // curl -X POST http://localhost:8080/register \
 //      -H "Content-Type: application/json" \
-//      -d '{"username": "admin", "password": "trial"}'
+//      -d '{"username": "glkee", "password": "hellodad"}'
 
 // curl -X POST http://localhost:8080/login \
 //      -H "Content-Type: application/json" \
-//      -d '{"username": "mleal2", "password": "hellomom"}'
+//      -d '{"username": "glkee", "password": "hellodad"}'
 
-// curl -X POST http://localhost:8080/notes/mleal2 \
-//   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sZWFsMiIsImV4cCI6MTc0ODkzNTU3Nn0.BiM86cC_-yLVaohDJe0bNWS1m0J9pbc6TKtOrWnmTFM" \
+// curl -X POST http://localhost:8080/notes/glkee \
+//   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imdsa2VlIiwiZXhwIjoxNzQ5MzIyNjIyfQ.7MoTIWVlBz_oYb_eEbkxUj8dmx7X6r7a6mTp0jBNzzk" \
 //   -H "Content-Type: application/json" \
-//   -d '{"username": "mleal2", "title": "my-first-note-2", "content": "this is my first note-2"}'
+//   -d '{"username": "glkee", "title": "my-dad-phone", "content": "340-555-1234"}'
 
-// curl http://localhost:8080/notes/mleal2 \                                                             ─╯
-//  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sZWFsMiIsImV4cCI6MTc0ODkzNTU3Nn0.BiM86cC_-yLVaohDJe0bNWS1m0J9pbc6TKtOrWnmTFM" \
+// curl http://localhost:8080/notes/glkee \
+//   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imdsa2VlIiwiZXhwIjoxNzQ5MzIyNjIyfQ.7MoTIWVlBz_oYb_eEbkxUj8dmx7X6r7a6mTp0jBNzzk"
 
-// curl http://localhost:8080/notes/mleal2/<id> \
-//   -H "Authorization: Bearer $TOKEN"
-// 	-d '{"usernane": mlea2}'
+// curl http://localhost:8080/notes/glkee/2 \
+//   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imdsa2VlIiwiZXhwIjoxNzQ5MzIyNjIyfQ.7MoTIWVlBz_oYb_eEbkxUj8dmx7X6r7a6mTp0jBNzzk"
 
-// curl -X PUT http://localhost:8080/notes/mleal2/<id> \
+// curl -X POST http://localhost:8080/notes/glkee/2 \
+//   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imdsa2VlIiwiZXhwIjoxNzQ5MzIyNjIyfQ.7MoTIWVlBz_oYb_eEbkxUj8dmx7X6r7a6mTp0jBNzzk"
+//   -d '{"title": "my-dad-phone", "content": "4444444444"}'
+
+// curl -X DELETE http://localhost:8080/notes/mleal2/<id> \
 //   -H "Authorization: Bearer $TOKEN" \
 //   -H "Content-Type: application/json" \
-//   -d '{"title": "Updated Title", "content": "Updated content"}'
 
 // CreateUser --> POST to register a new user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -157,42 +161,135 @@ func CreateNote(w http.ResponseWriter, r *http.Request) {
 // GetNote --> GET
 func GetNote(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received GET request for a specific note")
-	id := chi.URLParam(r, "id")
-	note, err := storage.GetNoteByID(id)
-	if err != nil {
+
+	// grab the username and the note-id
+	username := chi.URLParam(r, "username")
+	idStr := chi.URLParam(r, "id")
+
+	// convert the note-id to an int
+	noteIndex, err := strconv.Atoi(idStr)
+	if err != nil || noteIndex < 0 {
+		http.Error(w, "Invalid note ID", http.StatusBadRequest)
+		return
+	}
+
+	// check if the user exists in DB1
+	var user models.User
+	if err := storage.DB.Where("username = ?", username).First(&user).Error; err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// get all the notes based on the username --> which we know exists now
+	var notes []models.Note
+	if err := storage.DB2.Where("username = ?", username).Order("id").Find(&notes).Error; err != nil {
+		http.Error(w, "Failed to retrieve notes", http.StatusInternalServerError)
+		return
+	}
+
+	// Bounds check
+	if noteIndex >= len(notes) {
 		http.Error(w, "Note not found", http.StatusNotFound)
 		return
 	}
-	w.WriteHeader(http.StatusOK) // 200 OK for GET
-	json.NewEncoder(w).Encode(note)
+
+	// Get the correct note
+	correctNote := notes[noteIndex]
+
+	// Return the note
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(correctNote)
 }
 
 // UpdateNote --> PUT
 func UpdateNote(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received PUT request to update a note")
+	//get the username and the note-id
+	username := chi.URLParam(r, "username")
 	id := chi.URLParam(r, "id")
-	var note models.Note
-	if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	noteIndex, err := strconv.Atoi(id)
+	if err != nil || noteIndex < 0 {
+		http.Error(w, "Invalid note ID", http.StatusBadRequest)
 		return
 	}
-	note.ID = id
-	if err := storage.UpdateNote(note); err != nil {
+	//check the username exists in the DB1
+	var user models.User
+	if err := storage.DB.Where("username = ?", username).First(&user).Error; err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	//get all the notes from DB2 and check if the note exists
+	var notes []models.Note
+	if err := storage.DB2.Where("username = ?", username).Order("id").Find(&notes).Error; err != nil {
+		http.Error(w, "Failed to retrieve notes", http.StatusInternalServerError)
+		return
+	}
+	//bounds check
+	if noteIndex >= len(notes) {
 		http.Error(w, "Note not found", http.StatusNotFound)
 		return
 	}
+	// Get the correct note
+	correctNote := notes[noteIndex]
+	// update the note
+	var input struct {
+		Title   string `json:"title"`
+		Content string `json:"content"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	correctNote.Title = input.Title
+	correctNote.Content = input.Content
+	fmt.Println(correctNote.Title)
+	// save the note to DB2
+	if err := storage.DB2.Save(&correctNote).Error; err != nil {
+		http.Error(w, "Failed to update note", http.StatusInternalServerError)
+		return
+	}
+	//send the response back to the user
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(note)
+	json.NewEncoder(w).Encode(correctNote)
+	log.Println("Note updated successfully to DB2")
 }
 
 // DeleteNote --> DELETE
 func DeleteNote(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received DELETE request to delete a note")
+	username := chi.URLParam(r, "username")
 	id := chi.URLParam(r, "id")
-	if err := storage.DeleteNoteById(id); err != nil {
+	noteIndex, err := strconv.Atoi(id)
+	if err != nil || noteIndex < 0 {
+		http.Error(w, "Invalid note ID", http.StatusBadRequest)
+		return
+	}
+	//check the username exists in the DB1
+	var user models.User
+	if err := storage.DB.Where("username = ?", username).First(&user).Error; err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	//get all the notes from DB2 and check if the note exists
+	var notes []models.Note
+	if err := storage.DB2.Where("username = ?", username).Order("id").Find(&notes).Error; err != nil {
+		http.Error(w, "Failed to retrieve notes", http.StatusInternalServerError)
+		return
+	}
+	//bounds check
+	if noteIndex >= len(notes) {
 		http.Error(w, "Note not found", http.StatusNotFound)
 		return
 	}
+	// Get the correct note
+	correctNote := notes[noteIndex]
+	// delete the note
+	if err := storage.DB2.Delete(&correctNote).Error; err != nil {
+		http.Error(w, "Failed to delete note", http.StatusInternalServerError)
+		return
+	}
+	//send the response back to the user
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Note deleted successfully"))
+	log.Println("Note deleted successfully from DB2")
 }

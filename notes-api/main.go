@@ -27,14 +27,13 @@ import (
 //   -H "Content-Type: application/json" \
 //   -d '{"username": "mleal2", "title": "my-first-note-2", "content": "this is my first note-2"}'
 
-// curl http://localhost:8080/notes/mleal2 \                                                             ─╯
+// curl http://localhost:8080/notes/mleal2/3 \                                                             ─╯
 //  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sZWFsMiIsImV4cCI6MTc0ODkzNTU3Nn0.BiM86cC_-yLVaohDJe0bNWS1m0J9pbc6TKtOrWnmTFM" \
 
-// curl http://localhost:8080/notes/mleal2/<id> \
+// curl http://localhost:8080/notes/mleal2/3 \
 //   -H "Authorization: Bearer $TOKEN"
-// 	-d '{"usernane": mlea2}'
 
-// curl -X PUT http://localhost:8080/notes/mleal2/<id> \
+// curl -X PUT http://localhost:8080/notes/mleal2/3 \
 //   -H "Authorization: Bearer $TOKEN" \
 //   -H "Content-Type: application/json" \
 //   -d '{"title": "Updated Title", "content": "Updated content"}'
@@ -92,8 +91,8 @@ func main() {
 		r.Route("/notes", func(r chi.Router) {
 			r.Get("/{username}", handlers.GetAllNotes)
 			r.Post("/{username}", handlers.CreateNote)
-			r.Get("/{username}/{id}", handlers.GetNote)
-			r.Put("/{username}/{id}", handlers.UpdateNote)
+			r.Get("/{username}/{id}", handlers.GetNote)    //this will get the note (mleal2/3)
+			r.Put("/{username}/{id}", handlers.UpdateNote) //this will update the note (mleal2/3)
 			r.Delete("/{username}/{id}", handlers.DeleteNote)
 		})
 	})
